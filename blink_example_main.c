@@ -73,13 +73,6 @@ static void configure_led(void) {
   gpio_set_direction(SW2, GPIO_MODE_INPUT);
   gpio_set_direction(SW3, GPIO_MODE_INPUT);
 
-  //gpio_set_level(DISP_SEG_A, 1);
-  //gpio_set_level(DISP_SEG_B, 1);
-  //gpio_set_level(DISP_SEG_C, 1);
-  //gpio_set_level(DISP_SEG_D, 1);
-  //gpio_set_level(DISP_SEG_E, 1);
-  //gpio_set_level(DISP_SEG_F, 1);
-  //gpio_set_level(DISP_SEG_G, 1);
 }
 
 static void blink_f_e(int state) {
@@ -130,17 +123,6 @@ void app_main(void) {
     int inputState1 = gpio_get_level(SW1);
     int inputState2 = gpio_get_level(SW2);
     int inputState3 = gpio_get_level(SW3);
-
-    /*if (inputState1 == 1 && inputState2 == 1 && inputState3 == 1){
-    	gpio_set_level(DISP_SEG_A, 1);
-    	gpio_set_level(DISP_SEG_B, 1);
-    	gpio_set_level(DISP_SEG_C, 1);
-    	gpio_set_level(DISP_SEG_D, 1);
-    	gpio_set_level(DISP_SEG_E, 1);
-    	gpio_set_level(DISP_SEG_F, 1);
-    	gpio_set_level(DISP_SEG_G, 1);
-
-    }*/
 
     if (current_time - last_time_f_e >= delay_us && inputState1 == 1 && last_value_a_g_d == 1 && last_value_b_c == 1) {
 
