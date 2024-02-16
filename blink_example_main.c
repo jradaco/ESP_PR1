@@ -7,7 +7,7 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 #include <stdio.h>
-//#include "freertos/FreeRTOS.h"
+ //#include "freertos/FreeRTOS.h"
 //#include "freertos/task.h"
 #include "driver/gpio.h"
 
@@ -72,6 +72,14 @@ static void configure_led(void) {
   gpio_set_direction(SW1, GPIO_MODE_INPUT);
   gpio_set_direction(SW2, GPIO_MODE_INPUT);
   gpio_set_direction(SW3, GPIO_MODE_INPUT);
+
+  //gpio_set_level(DISP_SEG_A, 1);
+  //gpio_set_level(DISP_SEG_B, 1);
+  //gpio_set_level(DISP_SEG_C, 1);
+  //gpio_set_level(DISP_SEG_D, 1);
+  //gpio_set_level(DISP_SEG_E, 1);
+  //gpio_set_level(DISP_SEG_F, 1);
+  //gpio_set_level(DISP_SEG_G, 1);
 }
 
 static void blink_f_e(int state) {
@@ -106,51 +114,54 @@ void app_main(void) {
   /* Configure the peripheral according to the LED type */
   configure_led();
 
+  int last_time_f_e = 0;
+  int last_time_a_g_d = 0;
+  int last_time_b_c = 0;
+  const int delay_us = 500 * 1000; // 0.5 segundo en microsegundos
+
+  int last_value_f_e = 1;
+  int last_value_a_g_d = 1;
+  int last_value_b_c = 1;
+
   while (1) {
+
+    int current_time = esp_timer_get_time();
 
     int inputState1 = gpio_get_level(SW1);
     int inputState2 = gpio_get_level(SW2);
     int inputState3 = gpio_get_level(SW3);
-    int on = 0;
-    int off = 1;
 
-    if (inputState1 == 1 && inputState2 == 0 && inputState3 == 0) {
+    /*if (inputState1 == 1 && inputState2 == 1 && inputState3 == 1){
+    	gpio_set_level(DISP_SEG_A, 1);
+    	gpio_set_level(DISP_SEG_B, 1);
+    	gpio_set_level(DISP_SEG_C, 1);
+    	gpio_set_level(DISP_SEG_D, 1);
+    	gpio_set_level(DISP_SEG_E, 1);
+    	gpio_set_level(DISP_SEG_F, 1);
+    	gpio_set_level(DISP_SEG_G, 1);
 
-      //blink_a_g_d(off);
-      //blink_b_c(off);
+    }*/
 
-      blink_f_e(on);
-      delay_using_timer(500 * 1000);
-      blink_f_e(off);
-      delay_using_timer(500 * 1000);
+    if (current_time - last_time_f_e >= delay_us && inputState1 == 1 && last_value_a_g_d == 1 && last_value_b_c == 1) {
 
-    }
-
-    if (inputState1 == 1 && inputState2 == 1 && inputState3 == 0) {
-      blink_f_e(on);
-      delay_using_timer(500 * 1000);
-      blink_f_e(off);
-      delay_using_timer(500 * 1000);
-      blink_a_g_d(on);
-      delay_using_timer(500 * 1000);
-      blink_a_g_d(off);
-      delay_using_timer(500 * 1000);
+      blink_f_e(!last_value_f_e);
+      last_time_f_e = current_time; // Actualiza el tiempo de inicio
+      last_value_f_e = !last_value_f_e;
 
     }
 
-    if (inputState1 == 1 && inputState2 == 1 && inputState3 == 1) {
-      blink_f_e(on);
-      delay_using_timer(500 * 1000);
-      blink_f_e(off);
-      delay_using_timer(500 * 1000);
-      blink_a_g_d(on);
-      delay_using_timer(500 * 1000);
-      blink_a_g_d(off);
-      delay_using_timer(500 * 1000);
-      blink_b_c(on);
-      delay_using_timer(500 * 1000);
-      blink_b_c(off);
-      delay_using_timer(500 * 1000);
+    if (current_time - last_time_a_g_d >= delay_us && inputState2 == 1 && last_value_f_e == 1 && last_value_b_c == 1) {
+      blink_a_g_d(!last_value_a_g_d);
+      last_time_a_g_d = current_time; // Actualiza el tiempo de inicio
+      last_value_a_g_d = !last_value_a_g_d;
+
+    }
+
+    if (current_time - last_time_b_c >= delay_us && inputState3 == 1 && last_value_f_e == 1 && last_value_a_g_d == 1) {
+      blink_b_c(!last_value_b_c);
+      last_time_b_c = current_time; // Actualiza el tiempo de inicio
+      last_value_b_c = !last_value_b_c;
+
     }
 
   }
