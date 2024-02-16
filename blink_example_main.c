@@ -158,9 +158,9 @@ void app_main(void)
     	}
 
     	if (inputState1 == 1 && inputState2 == 1 && inputState3 == 1){
-    		blink_led();
-    	    blink_led1();
-    	    blink_led2();
+			blink_led();
+    		blink_led1();
+    		blink_led2();
     	}
 
     }
